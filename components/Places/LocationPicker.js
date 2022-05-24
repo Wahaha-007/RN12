@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Alert, View, StyleSheet, Image, Text } from 'react-native';
 import {
   getCurrentPositionAsync,
@@ -9,6 +9,11 @@ import {
 import { Colors } from '../../constants/colors';
 import OutlinedButton from '../UI/OutlinedButton';
 import { getMapPreview } from '../../util/location';
+import {
+  useNavigation,
+  useRoute,
+  useIsFocused,
+} from '@react-navigation/native';
 
 function LocationPicker() {
   const [pickedLocation, setPickedLocation] = useState();
@@ -16,7 +21,31 @@ function LocationPicker() {
   const [locationPermissionInformation, requestPermission] =
     useForegroundPermissions();
 
-  // 1. Permission ( Management ), Need this step for both iOS / Android
+  // 1. Handle Coordinate from Map Piccker
+  const isFocused = useIsFocused();
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  // Will not work in Stack Navigation because 'No new rendor' just 'put the stack upfront'
+  // So we add isFocused to dependency array
+  // REMEMBER ! THIS IS PATTERN for stack navigation
+  useEffect(() => {
+    if (isFocused && route.params) {
+      const mapPickedLocation = {
+        lat: route.params.pickedLat,
+        lng: route.params.pickedLng,
+      };
+      setPickedLocation(mapPickedLocation);
+    }
+  }, [route, isFocused]);
+
+  function pickOnMapHandler() {
+    navigation.navigate('Map');
+  }
+
+  // 2. Handle Coordinate from user current location (GPS)
+
+  // 2.1. Permission ( Management ), Need this step for both iOS / Android
   async function verifyPermissions() {
     if (
       locationPermissionInformation.status === PermissionStatus.UNDETERMINED
@@ -37,7 +66,7 @@ function LocationPicker() {
     return true;
   }
 
-  // 2. Get Current Location ( Worker )
+  // 2.2. Get Current Location ( Worker )
   async function getLocationHandler() {
     const hasPermission = await verifyPermissions();
 
@@ -53,7 +82,7 @@ function LocationPicker() {
     });
   }
 
-  function pickOnMapHandler() {}
+  // 3. Display Map picture via the above coordinate
 
   let locationPreview = <Text>No location picked yet.</Text>;
 

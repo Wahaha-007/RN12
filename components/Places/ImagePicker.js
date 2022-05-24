@@ -48,7 +48,7 @@ function ImagePicker() {
       quality: 0.5,
     });
 
-    // User press 'Back' without taking photo
+    // Camera scrren is opened but user press 'Back' without taking photo
     if (!image.cancelled) {
       setPickedImage(image.uri); // String
     }

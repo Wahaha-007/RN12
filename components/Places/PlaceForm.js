@@ -24,6 +24,7 @@ function PlaceForm() {
       </View>
       <ImagePicker />
       <LocationPicker />
+      <Button></Button>
     </ScrollView>
   );
 }

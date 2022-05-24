@@ -29,3 +29,8 @@ Step 5: (Optional Check)
 
 - include .env into .gitignore
 - expo r -c to clear Metro cache and restart bundle again
+
+6. Expo MapView
+   ref: https://docs.expo.dev/versions/latest/sdk/map-view/
+   https://github.com/react-native-maps/react-native-maps
+   expo install react-native-maps
