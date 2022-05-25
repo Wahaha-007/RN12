@@ -15,7 +15,7 @@ import {
   useIsFocused,
 } from '@react-navigation/native';
 
-function LocationPicker() {
+function LocationPicker({ onPickLocation }) {
   const [pickedLocation, setPickedLocation] = useState();
 
   const [locationPermissionInformation, requestPermission] =
@@ -36,12 +36,17 @@ function LocationPicker() {
         lng: route.params.pickedLng,
       };
       setPickedLocation(mapPickedLocation);
+      onPickLocation(mapPickedLocation);
     }
   }, [route, isFocused]);
 
   function pickOnMapHandler() {
     navigation.navigate('Map');
   }
+
+  //useEffect(() => {
+  //  onPickLocation(pickedLocation);
+  //}, [pickedLocation]); // Just try to be cool !
 
   // 2. Handle Coordinate from user current location (GPS)
 
@@ -77,6 +82,11 @@ function LocationPicker() {
     const location = await getCurrentPositionAsync();
     //console.log(location);
     setPickedLocation({
+      lat: location.coords.latitude,
+      lng: location.coords.longitude,
+    });
+
+    onPickLocation({
       lat: location.coords.latitude,
       lng: location.coords.longitude,
     });
