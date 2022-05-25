@@ -34,3 +34,6 @@ Step 5: (Optional Check)
    ref: https://docs.expo.dev/versions/latest/sdk/map-view/
    https://github.com/react-native-maps/react-native-maps
    expo install react-native-maps
+
+7. SQLite Database
+   ref: https://docs.expo.dev/versions/latest/sdk/sqlite/
