@@ -1,5 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 
+import { Place } from '../models/place';
+
 const database = SQLite.openDatabase('places.db');
 
 export function init() {
@@ -47,7 +49,64 @@ export function insertPlace(place) {
         ],
         (_, result) => {
           console.log(result);
+          // result ===> {"insertId": 1, "rows": {"_array": [], "length": 0}, "rowsAffected": 1}
           resolve(result);
+        },
+        (_, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+
+  return promise;
+}
+
+export function fetchPlaces() {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM places',
+        [],
+        (_, result) => {
+          console.log(result);
+          const places = [];
+
+          for (const dp of result.rows._array) {
+            places.push(
+              new Place(
+                dp.title,
+                dp.imageUri,
+                {
+                  // Just to comply Place input needed, make things more fuzzy by ourself
+                  address: dp.address,
+                  lat: dp.lat,
+                  lng: dp.lng,
+                },
+                dp.id
+              )
+            );
+          }
+          resolve(places);
+        },
+        (_, error) => {
+          reject(error);
+        }
+      );
+    });
+  });
+
+  return promise;
+}
+
+export function fetchPlaceDetails(id) {
+  const promise = new Promise((resolve, reject) => {
+    database.transaction((tx) => {
+      tx.executeSql(
+        'SELECT * FROM places WHERE id = ?',
+        [id],
+        (_, result) => {
+          resolve(result.rows._array[0]);
         },
         (_, error) => {
           reject(error);
