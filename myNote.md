@@ -37,3 +37,7 @@ Step 5: (Optional Check)
 
 7. SQLite Database
    ref: https://docs.expo.dev/versions/latest/sdk/sqlite/
+   expo install expo-sqlite
+
+8. App Loading Screen
+   expo install expo-app-loading
