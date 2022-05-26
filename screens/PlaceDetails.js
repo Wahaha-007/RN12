@@ -39,7 +39,12 @@ function PlaceDetails({ route, navigation }) {
 
   // 2. Exit ==> Show more on MAP
 
-  function showOnMapHandler() {}
+  function showOnMapHandler() {
+    navigation.navigate('Map', {
+      initialLat: fetchedPlace.location.lat,
+      initialLng: fetchedPlace.location.lng,
+    });
+  }
 
   return (
     <ScrollView>

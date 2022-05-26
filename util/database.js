@@ -48,7 +48,7 @@ export function insertPlace(place) {
           place.location.lng,
         ],
         (_, result) => {
-          console.log(result);
+          // console.log(result);
           // result ===> {"insertId": 1, "rows": {"_array": [], "length": 0}, "rowsAffected": 1}
           resolve(result);
         },
@@ -69,9 +69,10 @@ export function fetchPlaces() {
         'SELECT * FROM places',
         [],
         (_, result) => {
-          console.log(result);
+          // console.log(result);
           const places = [];
 
+          // Best practice to first specify data model and make every comply to it
           for (const dp of result.rows._array) {
             places.push(
               new Place(
@@ -106,8 +107,15 @@ export function fetchPlaceDetails(id) {
         'SELECT * FROM places WHERE id = ?',
         [id],
         (_, result) => {
-          console.log(result);
-          resolve(result.rows._array[0]);
+          // Best practice to first specify data model and make every comply to it
+          const dbPlace = result.rows._array[0];
+          const place = new Place(
+            dbPlace.title,
+            dbPlace.imageUri,
+            { lat: dbPlace.lat, lng: dbPlace.lng, address: dbPlace.address },
+            dbPlace.id
+          );
+          resolve(place);
         },
         (_, error) => {
           reject(error);

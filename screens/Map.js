@@ -4,12 +4,24 @@ import MapView, { Marker } from 'react-native-maps';
 
 import IconButton from '../components/UI/IconButton';
 
-function Map({ navigation }) {
-  const [selectedLocation, setSelectedLocation] = useState();
+function Map({ navigation, route }) {
+  // ******************************************************
+  // NOTE : If we need the read-only Map, we need to do 2 things
+  // 1. Send the initial position to MAP
+  // 2. Disable 'Save' icon in the Header ( if there is initial pos)
+
+  const initialLocation = route.params && {
+    // ReadOnly Map Mode
+    // Worth NOTING Technique here  !
+    lat: route.params.initialLat,
+    lng: route.params.initialLng,
+  };
+
+  const [selectedLocation, setSelectedLocation] = useState(initialLocation);
 
   const region = {
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: initialLocation ? initialLocation.lat : 37.78825,
+    longitude: initialLocation ? initialLocation.lng : -122.4324,
     latitudeDelta: 0.0922, // View Area, imply zoom level
     longitudeDelta: 0.0421,
   };
@@ -17,6 +29,9 @@ function Map({ navigation }) {
   // 1. Function (Handler) for GUI Marker display
 
   function selectLocationHandler(event) {
+    if (initialLocation) {
+      return;
+    }
     const lat = event.nativeEvent.coordinate.latitude;
     const lng = event.nativeEvent.coordinate.longitude;
 
@@ -42,6 +57,9 @@ function Map({ navigation }) {
   }, [navigation, selectedLocation]);
 
   useLayoutEffect(() => {
+    if (initialLocation) {
+      return; // ReadOnly Map Mode
+    }
     navigation.setOptions({
       headerRight: ({ tintColor }) => (
         <IconButton
@@ -52,7 +70,7 @@ function Map({ navigation }) {
         />
       ),
     });
-  }, [navigation, savePickedLocationHandler]);
+  }, [navigation, savePickedLocationHandler, initialLocation]);
 
   return (
     <MapView
